@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+  />
+  <title>Ruta Arcade Pixel</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app">
+    <div class="left-panel">
+      <h1>🚗 Ruta Arcade Pixel</h1>
+
+      <div class="score-box">
+        Puntaje: <span id="score">0</span>
+      </div>
+
+      <div class="game-area">
+        <canvas id="gameCanvas" width="360" height="640"></canvas>
+      </div>
+
+      <div class="mobile-controls">
+        <button id="leftBtn" aria-label="Mover a la izquierda">⬅</button>
+        <button id="rightBtn" aria-label="Mover a la derecha">➡</button>
+      </div>
+
+      <p class="hint">
+        PC: usá flechas del teclado. Celular: usá los botones.
+      </p>
+    </div>
+
+    <aside class="right-panel">
+      <div class="leaderboard-box">
+        <h2>🏆 Ranking</h2>
+        <div id="leaderboardList" class="leaderboard-list">
+          Cargando ranking...
+        </div>
+      </div>
+
+      <div id="gameOverPanel" class="gameover-box hidden">
+        <h2>Game Over</h2>
+        <p>Completá tus datos para guardar tu puntaje.</p>
+
+        <form id="scoreForm">
+          <input type="text" id="nombre" placeholder="Nombre" maxlength="40" required />
+          <input type="text" id="apellido" placeholder="Apellido" maxlength="40" required />
+          <input type="tel" id="telefono" placeholder="Celular" maxlength="25" required />
+
+          <button type="submit">Guardar puntaje</button>
+        </form>
+
+        <div id="saveMessage" class="save-message"></div>
+
+        <button id="restartBtn" class="restart-btn">Jugar otra vez</button>
+      </div>
+    </aside>
+  </div>
+
+  <script src="api.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
