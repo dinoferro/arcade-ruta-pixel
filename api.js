@@ -1,6 +1,4 @@
-  // Cuando tengamos el backend online, reemplazás null por tu URL.
-  // Ejemplo:
-  // baseUrl: "https://tu-backend.tudominio.workers.dev"
+const API_CONFIG = {
   baseUrl: "https://arcade-ruta-api.ferrodinorodrigo.workers.dev"
 };
 
