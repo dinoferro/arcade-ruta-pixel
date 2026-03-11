@@ -1,7 +1,7 @@
   // Cuando tengamos el backend online, reemplazás null por tu URL.
   // Ejemplo:
   // baseUrl: "https://tu-backend.tudominio.workers.dev"
-  baseUrl: null
+  baseUrl: "https://arcade-ruta-api.ferrodinorodrigo.workers.dev"
 };
 
 function sanitizeText(value) {
