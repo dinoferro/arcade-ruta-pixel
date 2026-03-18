@@ -2,8 +2,10 @@ const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
 const scoreEl = document.getElementById("score");
+const overlay = document.getElementById("overlay");
+const formStep = document.getElementById("formStep");
+const rankingStep = document.getElementById("rankingStep");
 const leaderboardList = document.getElementById("leaderboardList");
-const gameOverPanel = document.getElementById("gameOverPanel");
 const scoreForm = document.getElementById("scoreForm");
 const saveMessage = document.getElementById("saveMessage");
 const restartBtn = document.getElementById("restartBtn");
@@ -11,8 +13,8 @@ const restartBtn = document.getElementById("restartBtn");
 const leftBtn = document.getElementById("leftBtn");
 const rightBtn = document.getElementById("rightBtn");
 
-const ROAD_X = 60;
-const ROAD_WIDTH = 240;
+const ROAD_WIDTH = 180;
+const ROAD_X = (canvas.width - ROAD_WIDTH) / 2;
 const ROAD_HEIGHT = canvas.height;
 const LANE_COUNT = 3;
 const LANE_WIDTH = ROAD_WIDTH / LANE_COUNT;
@@ -26,10 +28,10 @@ let formSubmitted = false;
 
 const player = {
   lane: 1,
-  w: 34,
-  h: 64,
+  w: 26,
+  h: 52,
   x: 0,
-  y: canvas.height - 100
+  y: canvas.height - 90
 };
 
 let enemies = [];
@@ -75,41 +77,41 @@ rightBtn.addEventListener("touchstart", (e) => {
 });
 
 function drawTree(x, y) {
-  ctx.fillStyle = "#6b3f1d";
-  ctx.fillRect(x + 8, y + 18, 10, 20);
+  ctx.fillStyle = "#73461f";
+  ctx.fillRect(x + 6, y + 16, 8, 16);
 
   ctx.fillStyle = "#1faa59";
-  ctx.fillRect(x, y + 8, 26, 16);
-  ctx.fillRect(x + 4, y, 18, 12);
-  ctx.fillRect(x + 4, y + 20, 18, 10);
+  ctx.fillRect(x, y + 8, 20, 12);
+  ctx.fillRect(x + 3, y, 14, 10);
+  ctx.fillRect(x + 3, y + 18, 14, 8);
 }
 
 function drawEnvironment() {
-  ctx.fillStyle = "#4caf50";
+  ctx.fillStyle = "#47a84c";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  for (let y = 0; y < canvas.height + 64; y += 64) {
-    drawTree(12, (y + roadLineOffset * 0.5) % (canvas.height + 64) - 50);
-    drawTree(324, (y + roadLineOffset * 0.5 + 28) % (canvas.height + 64) - 50);
+  for (let y = 0; y < canvas.height + 64; y += 58) {
+    drawTree(28, (y + roadLineOffset * 0.45) % (canvas.height + 64) - 40);
+    drawTree(canvas.width - 48, (y + roadLineOffset * 0.45 + 22) % (canvas.height + 64) - 40);
   }
 }
 
 function drawRoad() {
-  ctx.fillStyle = "#3b3b3b";
+  ctx.fillStyle = "#373737";
   ctx.fillRect(ROAD_X, 0, ROAD_WIDTH, ROAD_HEIGHT);
 
   ctx.fillStyle = "#d9d9d9";
-  ctx.fillRect(ROAD_X, 0, 6, ROAD_HEIGHT);
-  ctx.fillRect(ROAD_X + ROAD_WIDTH - 6, 0, 6, ROAD_HEIGHT);
+  ctx.fillRect(ROAD_X, 0, 5, ROAD_HEIGHT);
+  ctx.fillRect(ROAD_X + ROAD_WIDTH - 5, 0, 5, ROAD_HEIGHT);
 
   ctx.fillStyle = "#ffffff";
-  roadLineOffset += 8;
-  if (roadLineOffset >= 60) roadLineOffset = 0;
+  roadLineOffset += 7;
+  if (roadLineOffset >= 52) roadLineOffset = 0;
 
   for (let lane = 1; lane < LANE_COUNT; lane++) {
-    const x = ROAD_X + lane * LANE_WIDTH - 3;
-    for (let y = -60 + roadLineOffset; y < ROAD_HEIGHT; y += 60) {
-      ctx.fillRect(x, y, 6, 32);
+    const x = ROAD_X + lane * LANE_WIDTH - 2;
+    for (let y = -52 + roadLineOffset; y < ROAD_HEIGHT; y += 52) {
+      ctx.fillRect(x, y, 4, 26);
     }
   }
 }
@@ -119,21 +121,21 @@ function drawPlayerCar(x, y, w, h) {
   ctx.fillRect(x, y, w, h);
 
   ctx.fillStyle = "#111";
-  ctx.fillRect(x + 7, y + 8, w - 14, 16);
+  ctx.fillRect(x + 5, y + 7, w - 10, 13);
 
   ctx.fillStyle = "#222";
-  ctx.fillRect(x - 2, y + 10, 5, 15);
-  ctx.fillRect(x + w - 3, y + 10, 5, 15);
-  ctx.fillRect(x - 2, y + h - 22, 5, 15);
-  ctx.fillRect(x + w - 3, y + h - 22, 5, 15);
+  ctx.fillRect(x - 2, y + 8, 4, 12);
+  ctx.fillRect(x + w - 2, y + 8, 4, 12);
+  ctx.fillRect(x - 2, y + h - 18, 4, 12);
+  ctx.fillRect(x + w - 2, y + h - 18, 4, 12);
 
   ctx.fillStyle = "#ffe066";
-  ctx.fillRect(x + 3, y + 3, 7, 5);
-  ctx.fillRect(x + w - 10, y + 3, 7, 5);
+  ctx.fillRect(x + 2, y + 2, 5, 4);
+  ctx.fillRect(x + w - 7, y + 2, 5, 4);
 
   ctx.fillStyle = "#ff4d4d";
-  ctx.fillRect(x + 4, y + h - 7, 6, 4);
-  ctx.fillRect(x + w - 10, y + h - 7, 6, 4);
+  ctx.fillRect(x + 3, y + h - 5, 5, 3);
+  ctx.fillRect(x + w - 8, y + h - 5, 5, 3);
 }
 
 function drawEnemyCar(x, y, w, h) {
@@ -141,17 +143,17 @@ function drawEnemyCar(x, y, w, h) {
   ctx.fillRect(x, y, w, h);
 
   ctx.fillStyle = "#111";
-  ctx.fillRect(x + 7, y + 8, w - 14, 16);
+  ctx.fillRect(x + 5, y + 7, w - 10, 13);
 
   ctx.fillStyle = "#222";
-  ctx.fillRect(x - 2, y + 10, 5, 15);
-  ctx.fillRect(x + w - 3, y + 10, 5, 15);
-  ctx.fillRect(x - 2, y + h - 22, 5, 15);
-  ctx.fillRect(x + w - 3, y + h - 22, 5, 15);
+  ctx.fillRect(x - 2, y + 8, 4, 12);
+  ctx.fillRect(x + w - 2, y + 8, 4, 12);
+  ctx.fillRect(x - 2, y + h - 18, 4, 12);
+  ctx.fillRect(x + w - 2, y + h - 18, 4, 12);
 
   ctx.fillStyle = "#ffe066";
-  ctx.fillRect(x + 3, y + 3, 7, 5);
-  ctx.fillRect(x + w - 10, y + 3, 7, 5);
+  ctx.fillRect(x + 2, y + 2, 5, 4);
+  ctx.fillRect(x + w - 7, y + 2, 5, 4);
 }
 
 function createEnemy() {
@@ -159,11 +161,11 @@ function createEnemy() {
 
   enemies.push({
     lane,
-    x: ROAD_X + lane * LANE_WIDTH + (LANE_WIDTH - 34) / 2,
-    y: -90,
-    w: 34,
-    h: 64,
-    speed: Math.min(5 + score * 0.05, 11)
+    x: ROAD_X + lane * LANE_WIDTH + (LANE_WIDTH - 26) / 2,
+    y: -70,
+    w: 26,
+    h: 52,
+    speed: Math.min(4.6 + score * 0.04, 9)
   });
 }
 
@@ -176,9 +178,20 @@ function collide(a, b) {
   );
 }
 
+function showFormModal() {
+  overlay.classList.remove("hidden");
+  formStep.classList.remove("hidden");
+  rankingStep.classList.add("hidden");
+}
+
+function showRankingModal() {
+  formStep.classList.add("hidden");
+  rankingStep.classList.remove("hidden");
+}
+
 function endGame() {
   gameOver = true;
-  gameOverPanel.classList.remove("hidden");
+  showFormModal();
 }
 
 function updateGame() {
@@ -225,7 +238,7 @@ async function loadLeaderboard() {
     const data = await getLeaderboard();
 
     if (!data.length) {
-      leaderboardList.innerHTML = "<p>Aún no hay puntajes cargados.</p>";
+      leaderboardList.innerHTML = "<p style='text-align:center;color:#c8d0de;'>Aún no hay puntajes cargados.</p>";
       return;
     }
 
@@ -240,7 +253,7 @@ async function loadLeaderboard() {
       })
       .join("");
   } catch (error) {
-    leaderboardList.innerHTML = "<p>No se pudo cargar el ranking.</p>";
+    leaderboardList.innerHTML = "<p style='text-align:center;color:#ffb4b4;'>No se pudo cargar el ranking.</p>";
   }
 }
 
@@ -269,8 +282,9 @@ scoreForm.addEventListener("submit", async (e) => {
     });
 
     formSubmitted = true;
-    saveMessage.textContent = "Puntaje guardado correctamente.";
+    saveMessage.textContent = "";
     await loadLeaderboard();
+    showRankingModal();
   } catch (error) {
     saveMessage.textContent = error.message || "No se pudo guardar.";
   }
@@ -288,7 +302,9 @@ restartBtn.addEventListener("click", () => {
   scoreEl.textContent = "0";
   scoreForm.reset();
   saveMessage.textContent = "";
-  gameOverPanel.classList.add("hidden");
+  overlay.classList.add("hidden");
+  formStep.classList.remove("hidden");
+  rankingStep.classList.add("hidden");
   formSubmitted = false;
   updateGame();
 });
